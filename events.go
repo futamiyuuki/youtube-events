@@ -6,27 +6,8 @@ import (
 	"log"
 
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"gopkg.in/mgo.v2/bson"
 )
-
-type event struct {
-	EventType     string `json:"event_type"`
-	VideoID       string `json:"video_id"`
-	VideoCategory string `json:"video_category"`
-	ChannelID     string `json:"channel_id"`
-	IsSubscribed  bool   `json:"is_subscirbed"`
-	SearchTerm    string `json:"search_term"`
-}
-
-type categoryCount struct {
-	Category string `json:"category"`
-	Count    int    `json:"count"`
-}
-
-// Channel represents Youtube channel category views
-type channel struct {
-	ChannelID      string          `json:"_id"`
-	CategoryCounts []categoryCount `json:"categories"`
-}
 
 func processEvents(msg *sqs.Message) {
 	fmt.Println(*msg.Body)
@@ -36,6 +17,13 @@ func processEvents(msg *sqs.Message) {
 	}
 
 	if m.EventType == "video_click" {
+		fmt.Printf("message: %+v", m)
 		fmt.Println("video clicked")
+		var ch ChannelModel
+		fmt.Println("id:", m.ChannelID)
+		if err := dbc.Find(bson.M{"_id": m.ChannelID}).One(&ch); err != nil {
+			log.Fatal(err)
+		}
+		fmt.Printf("channel: %+v", ch)
 	}
 }

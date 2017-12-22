@@ -3,13 +3,15 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/joho/godotenv"
+	mgo "gopkg.in/mgo.v2"
 )
 
-// var pm = make(chan string)
+var dbc *mgo.Collection
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -24,6 +26,15 @@ func main() {
 	}
 
 	svc := sqs.New(sess)
+
+	mURI := os.Getenv("MONGODB_URI")
+	mSess, err := mgo.Dial(mURI)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println("Using DB:", mURI)
+	dbc = mSess.DB("events").C("channels")
+	defer mSess.Close()
 
 	fmt.Println("Start polling...")
 	poll(svc)

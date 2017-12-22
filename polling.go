@@ -40,10 +40,6 @@ func poll(svc *sqs.SQS) {
 			for _, msg := range resp.Messages {
 				go func(svc *sqs.SQS, msg *sqs.Message) {
 					processEvents(msg)
-					// svc.DeleteMessage(&sqs.DeleteMessageInput{
-					// 	QueueUrl:      &qURL,
-					// 	ReceiptHandle: msg.ReceiptHandle,
-					// })
 					dmreqs = append(dmreqs, &sqs.DeleteMessageBatchRequestEntry{
 						Id:            msg.MessageId,
 						ReceiptHandle: msg.ReceiptHandle,
