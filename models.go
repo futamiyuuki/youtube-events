@@ -19,12 +19,12 @@ type channel struct {
 	CategoryCounts []categoryCount `json:"categories"`
 }
 
-type CategoryModel struct {
+type categoryModel struct {
 	Category string `bson:"category"`
 	Count    int    `bson:"count"`
 }
 
-type ChannelModel struct {
+type channelModel struct {
 	ID         string          `bson:"_id"`
-	Categories []CategoryModel `bson:"categories"`
+	Categories []categoryModel `bson:"categories"`
 }
