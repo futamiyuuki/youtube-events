@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -38,7 +37,8 @@ func poll(svc *sqs.SQS) {
 			mcnt := 0
 			dmreqs := []*sqs.DeleteMessageBatchRequestEntry{}
 			for _, msg := range resp.Messages {
-				go func(svc *sqs.SQS, msg *sqs.Message) {
+				go func(msg *sqs.Message) {
+					// st := time.Now()
 					processEvents(msg)
 					dmreqs = append(dmreqs, &sqs.DeleteMessageBatchRequestEntry{
 						Id:            msg.MessageId,
@@ -46,13 +46,14 @@ func poll(svc *sqs.SQS) {
 					})
 					mcnt++
 					if mcnt == mlen {
-						fmt.Println("Batch deleting...")
+						// fmt.Println("Batch deleting...")
 						svc.DeleteMessageBatch(&sqs.DeleteMessageBatchInput{
 							QueueUrl: &qURL,
 							Entries:  dmreqs,
 						})
+						// fmt.Printf("\nFinished deleting message %s\n", time.Now().Sub(st).String())
 					}
-				}(svc, msg)
+				}(msg)
 			}
 		}
 	}

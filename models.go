@@ -19,6 +19,15 @@ type channel struct {
 	CategoryCounts []categoryCount `json:"categories"`
 }
 
+type eventModel struct {
+	EventType     string `bson:"event_type"`
+	VideoID       string `bson:"video_id"`
+	VideoCategory string `bson:"video_category"`
+	ChannelID     string `bson:"channel_id"`
+	IsSubscribed  bool   `bson:"is_subscirbed"`
+	SearchTerm    string `bson:"search_term"`
+}
+
 type categoryModel struct {
 	Category string `bson:"category"`
 	Count    int    `bson:"count"`

@@ -12,6 +12,7 @@ import (
 )
 
 var dbc *mgo.Collection
+var dbe *mgo.Collection
 
 func init() {
 	if err := godotenv.Load(); err != nil {
@@ -34,6 +35,7 @@ func main() {
 	}
 	fmt.Println("Using DB:", mURI)
 	dbc = mSess.DB("events").C("channels")
+	dbe = mSess.DB("events").C("events")
 	defer mSess.Close()
 
 	fmt.Println("Start polling...")
