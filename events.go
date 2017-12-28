@@ -26,31 +26,29 @@ func processEvents(msg *sqs.Message) {
 
 	if m.EventType == "video_click" {
 		// fmt.Printf("video clicked, message: %+v\n", m)
-		go func(m event) {
-			var ch channelModel
-			if err := dbc.FindId(m.ChannelID).One(&ch); err != nil {
-				// fmt.Println("Channel not found, creating new channel")
-				cms := []categoryModel{}
-				cms = append(cms, categoryModel{
-					m.VideoCategory,
-					1,
-				})
-				ch.ID = m.ChannelID
-				ch.Categories = cms
-				if err := dbc.Insert(&ch); err != nil {
-					log.Fatal(err)
-				}
-			} else {
-				// fmt.Println("Channel found, updating channel", ch.ID)
-				for i, cat := range ch.Categories {
-					if cat.Category == m.VideoCategory {
-						ch.Categories[i].Count++
-					}
-				}
-				dbc.UpdateId(ch.ID, bson.M{"$set": ch})
+		var ch channelModel
+		if err := dbc.FindId(m.ChannelID).One(&ch); err != nil {
+			// fmt.Println("Channel not found, creating new channel")
+			cms := []categoryModel{}
+			cms = append(cms, categoryModel{
+				m.VideoCategory,
+				1,
+			})
+			ch.ID = m.ChannelID
+			ch.Categories = cms
+			if err := dbc.Insert(&ch); err != nil {
+				log.Fatal(err)
 			}
-			// fmt.Printf("channel: %+v\n", ch)
-			// fmt.Printf("\nFinished processing click event in %s\n", time.Now().Sub(st).String())
-		}(m)
+		} else {
+			// fmt.Println("Channel found, updating channel", ch.ID)
+			for i, cat := range ch.Categories {
+				if cat.Category == m.VideoCategory {
+					ch.Categories[i].Count++
+				}
+			}
+			dbc.UpdateId(ch.ID, bson.M{"$set": ch})
+		}
+		// fmt.Printf("channel: %+v\n", ch)
+		// fmt.Printf("\nFinished processing click event in %s\n", time.Now().Sub(st).String())
 	}
 }

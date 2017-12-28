@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 
+	"github.com/newrelic/go-agent"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
@@ -13,7 +15,7 @@ const (
 	waitTimeSeconds     int64 = 20
 )
 
-func poll(svc *sqs.SQS) {
+func poll(svc *sqs.SQS, nr newrelic.Application) {
 	qURL := os.Getenv("AWS_QUEUE_URL")
 
 	for {
@@ -38,6 +40,8 @@ func poll(svc *sqs.SQS) {
 			dmreqs := []*sqs.DeleteMessageBatchRequestEntry{}
 			for _, msg := range resp.Messages {
 				go func(msg *sqs.Message) {
+					txn := nr.StartTransaction("processMessage", nil, nil)
+					defer txn.End()
 					// st := time.Now()
 					processEvents(msg)
 					dmreqs = append(dmreqs, &sqs.DeleteMessageBatchRequestEntry{

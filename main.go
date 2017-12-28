@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/joho/godotenv"
+	newrelic "github.com/newrelic/go-agent"
 	mgo "gopkg.in/mgo.v2"
 )
 
@@ -21,6 +22,12 @@ func init() {
 }
 
 func main() {
+	nrConfig := newrelic.NewConfig("youtube-events", os.Getenv("NR_KEY"))
+	nr, err := newrelic.NewApplication(nrConfig)
+	if err != nil {
+		log.Fatal("Error initializing New Relic APM")
+	}
+
 	sess, err := session.NewSession()
 	if err != nil {
 		log.Fatal("Error loading AWS session")
@@ -39,5 +46,5 @@ func main() {
 	defer mSess.Close()
 
 	fmt.Println("Start polling...")
-	poll(svc)
+	poll(svc, nr)
 }
