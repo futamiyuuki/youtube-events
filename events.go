@@ -47,7 +47,6 @@ func (w Worker) Stop() {
 }
 
 func (j Job) ProcessEvents() {
-	// st := time.Now()
 	var m event
 	if err := json.Unmarshal([]byte(*j.Msg.Body), &m); err != nil {
 		log.Fatal(err)
@@ -58,7 +57,6 @@ func (j Job) ProcessEvents() {
 		if err := dbe.Insert(&e); err != nil {
 			log.Fatal(err)
 		}
-		// fmt.Printf("\nFinished inserting event in %s\n", time.Now().Sub(st).String())
 	}(m)
 
 	if m.EventType == "video_click" {
@@ -83,7 +81,5 @@ func (j Job) ProcessEvents() {
 			}
 			dbc.UpdateId(ch.ID, bson.M{"$set": ch})
 		}
-		// fmt.Printf("channel: %+v\n", ch)
-		// fmt.Printf("\nFinished processing click event in %s\n", time.Now().Sub(st).String())
 	}
 }

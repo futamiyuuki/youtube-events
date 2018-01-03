@@ -39,9 +39,6 @@ func poll(svc *sqs.SQS, sc *statsd.Client) {
 				mcnt := 0
 				dmreqs := []*sqs.DeleteMessageBatchRequestEntry{}
 				for _, msg := range resp.Messages {
-					// txn := nr.StartTransaction("processMessage", nil, nil)
-					// defer txn.End()
-					// st := time.Now()
 					t := sc.NewTiming()
 					// processEvents(msg)
 					JobQueue <- Job{msg}
@@ -56,7 +53,6 @@ func poll(svc *sqs.SQS, sc *statsd.Client) {
 							QueueUrl: &qURL,
 							Entries:  dmreqs,
 						})
-						// fmt.Printf("\nFinished deleting message %s\n", time.Now().Sub(st).String())
 					}
 				}
 			}
