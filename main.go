@@ -28,11 +28,6 @@ func init() {
 }
 
 func main() {
-	// nrConfig := newrelic.NewConfig("youtube-events", os.Getenv("NR_KEY"))
-	// nr, err := newrelic.NewApplication(nrConfig)
-	// if err != nil {
-	// 	log.Fatal("Error initializing New Relic APM")
-	// }
 	stop := make(chan bool)
 
 	sc, err := statsd.New()
