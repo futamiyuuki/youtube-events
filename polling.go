@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
@@ -14,9 +13,7 @@ const (
 	waitTimeSeconds     int64 = 20
 )
 
-func poll(svc *sqs.SQS, sc *statsd.Client) {
-	qURL := os.Getenv("AWS_QUEUE_URL")
-
+func poll(svc *sqs.SQS, sc *statsd.Client, qURL string) {
 	go func() {
 		for {
 			resp, err := svc.ReceiveMessage(&sqs.ReceiveMessageInput{

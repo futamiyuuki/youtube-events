@@ -71,8 +71,9 @@ func main() {
 	}()
 
 	fmt.Println("Start polling...")
+	qURL := os.Getenv("AWS_QUEUE_URL")
 	for i := 0; i < 38; i++ {
-		poll(svc, sc)
+		poll(svc, sc, qURL)
 	}
 
 	<-stop
