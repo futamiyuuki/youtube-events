@@ -1,5 +1,6 @@
 data-gen
 youtubeclone
-
+docker-compose.yml
+docker-stack.yml
 .gitignore
 .env

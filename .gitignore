@@ -1,3 +1,4 @@
 youtubeclone
-
+docker-compose.yml
+docker-stack.yml
 .env

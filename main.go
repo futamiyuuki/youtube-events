@@ -7,7 +7,6 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
-	"github.com/joho/godotenv"
 	statsd "gopkg.in/alexcesaro/statsd.v2"
 	mgo "gopkg.in/mgo.v2"
 )
@@ -21,16 +20,16 @@ var dbc *mgo.Collection
 var dbe *mgo.Collection
 
 func init() {
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	JobQueue = make(chan Job, maxJobCount)
 }
 
 func main() {
 	stop := make(chan bool)
 
-	sc, err := statsd.New()
+	sc, err := statsd.New(statsd.Address(os.Getenv("STATSD_URI")))
 	if err != nil {
 		log.Fatal(err)
 	}
